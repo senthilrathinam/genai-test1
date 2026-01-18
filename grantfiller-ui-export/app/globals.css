@@ -1,0 +1,144 @@
+@import "tailwindcss";
+@import "./theme-components.css";
+
+/* ============================================
+   PROFESSIONAL THEME - Corporate & Structured
+   ============================================ */
+:root[data-theme="professional"] {
+  --bg-primary: 9 9 11;
+  --bg-secondary: 24 24 27;
+  --bg-tertiary: 39 39 42;
+  --border-color: 63 63 70;
+  --text-primary: 250 250 250;
+  --text-secondary: 161 161 170;
+  --text-tertiary: 113 113 122;
+  --accent: 59 130 246;
+  --accent-hover: 37 99 235;
+  --accent-light: 96 165 250;
+  --success: 34 197 94;
+  --warning: 251 191 36;
+  --danger: 239 68 68;
+  
+  --spacing-unit: 1rem;
+  --font-heading: ui-sans-serif, system-ui, sans-serif;
+  --font-body: ui-sans-serif, system-ui, sans-serif;
+  --radius-sm: 0.375rem;
+  --radius-md: 0.5rem;
+  --radius-lg: 0.75rem;
+  --shadow: 0 4px 6px -1px rgb(0 0 0 / 0.3);
+  --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.4);
+}
+
+/* ============================================
+   VIBRANT THEME - Modern & Energetic
+   ============================================ */
+:root[data-theme="vibrant"] {
+  --bg-primary: 17 24 39;
+  --bg-secondary: 30 41 59;
+  --bg-tertiary: 51 65 85;
+  --border-color: 71 85 105;
+  --text-primary: 248 250 252;
+  --text-secondary: 203 213 225;
+  --text-tertiary: 148 163 184;
+  --accent: 236 72 153;
+  --accent-hover: 219 39 119;
+  --accent-light: 244 114 182;
+  --success: 52 211 153;
+  --warning: 251 146 60;
+  --danger: 248 113 113;
+  
+  --spacing-unit: 1.25rem;
+  --font-heading: ui-rounded, system-ui, sans-serif;
+  --font-body: ui-sans-serif, system-ui, sans-serif;
+  --radius-sm: 0.75rem;
+  --radius-md: 1rem;
+  --radius-lg: 1.5rem;
+  --shadow: 0 8px 16px -4px rgb(236 72 153 / 0.2);
+  --shadow-lg: 0 20px 25px -5px rgb(236 72 153 / 0.3);
+}
+
+/* ============================================
+   MINIMAL THEME - Clean & Spacious
+   ============================================ */
+:root[data-theme="minimal"] {
+  --bg-primary: 255 255 255;
+  --bg-secondary: 249 250 251;
+  --bg-tertiary: 243 244 246;
+  --border-color: 229 231 235;
+  --text-primary: 17 24 39;
+  --text-secondary: 75 85 99;
+  --text-tertiary: 156 163 175;
+  --accent: 99 102 241;
+  --accent-hover: 79 70 229;
+  --accent-light: 129 140 248;
+  --success: 16 185 129;
+  --warning: 245 158 11;
+  --danger: 239 68 68;
+  
+  --spacing-unit: 1.5rem;
+  --font-heading: ui-serif, Georgia, serif;
+  --font-body: ui-sans-serif, system-ui, sans-serif;
+  --radius-sm: 0.25rem;
+  --radius-md: 0.375rem;
+  --radius-lg: 0.5rem;
+  --shadow: 0 1px 3px 0 rgb(0 0 0 / 0.1);
+  --shadow-lg: 0 4px 6px -1px rgb(0 0 0 / 0.1);
+}
+
+body {
+  background-color: rgb(var(--bg-primary));
+  color: rgb(var(--text-primary));
+  font-family: var(--font-body);
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+/* Theme-specific global styles */
+:root[data-theme="professional"] body {
+  letter-spacing: -0.01em;
+  line-height: 1.6;
+}
+
+:root[data-theme="vibrant"] body {
+  letter-spacing: -0.02em;
+  line-height: 1.65;
+}
+
+:root[data-theme="minimal"] body {
+  letter-spacing: 0;
+  line-height: 1.75;
+}
+
+/* Heading styles per theme */
+:root[data-theme="professional"] h1,
+:root[data-theme="professional"] h2,
+:root[data-theme="professional"] h3 {
+  font-weight: 700;
+  letter-spacing: -0.025em;
+}
+
+:root[data-theme="vibrant"] h1,
+:root[data-theme="vibrant"] h2,
+:root[data-theme="vibrant"] h3 {
+  font-weight: 800;
+  letter-spacing: -0.03em;
+}
+
+:root[data-theme="minimal"] h1,
+:root[data-theme="minimal"] h2,
+:root[data-theme="minimal"] h3 {
+  font-family: var(--font-heading);
+  font-weight: 600;
+  letter-spacing: -0.01em;
+}
+
+
+
+
+@theme {
+  --color-accent: #3b82f6;
+}
+
+body {
+  background-color: #09090b;
+  color: #fafafa;
+}
