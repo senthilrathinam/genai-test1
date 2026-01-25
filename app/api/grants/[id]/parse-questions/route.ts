@@ -54,35 +54,44 @@ export async function POST(
     const grant = grantResult.Item;
     const url = grant.grant_url || '';
 
-    if (!url) {
-      return NextResponse.json({ error: 'Grant URL is missing' }, { status: 400 });
-    }
-
     let questions: GrantResponse[];
-    let s3Key = body.s3_key;
+    let s3Key = body.s3_key || grant.source_file_key;
     let fileType = body.file_type;
     let fileName = body.file_name;
 
-    const isPdfUrl = url.toLowerCase().endsWith('.pdf') || url.includes('.pdf?');
-    const isDocxUrl = url.toLowerCase().endsWith('.docx') || url.includes('.docx?');
-
-    if ((isPdfUrl || isDocxUrl) && !s3Key) {
-      console.log('URL points to document, downloading:', url);
-      const downloaded = await downloadUrlToS3(url);
-      if (downloaded) {
-        s3Key = downloaded.s3_key;
-        fileType = downloaded.file_type;
-        fileName = url.split('/').pop() || 'document';
-        console.log('Downloaded to S3:', s3Key);
+    // If we have an S3 key from upload, use document parsing
+    if (s3Key) {
+      // Determine file type if not provided
+      if (!fileType) {
+        fileType = s3Key.endsWith('.docx') 
+          ? 'application/vnd.openxmlformats-officedocument.wordprocessingml.document'
+          : 'application/pdf';
       }
-    }
-
-    if (s3Key && fileType) {
       console.log('Parsing questions from document:', s3Key);
       questions = await parseDocumentQuestions(s3Key, fileType);
+    } else if (url) {
+      // Check if URL points to a document
+      const isPdfUrl = url.toLowerCase().endsWith('.pdf') || url.includes('.pdf?');
+      const isDocxUrl = url.toLowerCase().endsWith('.docx') || url.includes('.docx?');
+
+      if (isPdfUrl || isDocxUrl) {
+        console.log('URL points to document, downloading:', url);
+        const downloaded = await downloadUrlToS3(url);
+        if (downloaded) {
+          s3Key = downloaded.s3_key;
+          fileType = downloaded.file_type;
+          fileName = url.split('/').pop() || 'document';
+          console.log('Downloaded to S3:', s3Key);
+          questions = await parseDocumentQuestions(s3Key, fileType);
+        } else {
+          return NextResponse.json({ error: 'Failed to download document from URL' }, { status: 400 });
+        }
+      } else {
+        console.log('Parsing questions from HTML:', url);
+        questions = await parseHtmlQuestions(url);
+      }
     } else {
-      console.log('Parsing questions from HTML:', url);
-      questions = await parseHtmlQuestions(url);
+      return NextResponse.json({ error: 'No URL or uploaded file provided' }, { status: 400 });
     }
 
     console.log('Parsed', questions.length, 'questions');

@@ -201,7 +201,7 @@ async function extractFormFields(page: any) {
         const labelEl = id ? document.querySelector(`label[for="${id}"]`) : el.closest('label');
         if (labelEl) {
           const spans = labelEl.querySelectorAll('span');
-          spans.forEach(span => {
+          spans.forEach((span: Element) => {
             const text = span.textContent?.trim() || '';
             if (text && text.length > 20) helperText += ' ' + text;
           });
@@ -303,7 +303,7 @@ export async function fillFormWithPlaywright(input: {
   let fieldsSkipped = 0;
 
   const browser = await chromium.launch({
-    headless: false,
+    headless: true,
   });
   
   const context = await browser.newContext();
@@ -343,7 +343,7 @@ export async function fillFormWithPlaywright(input: {
     while (hasMorePages && currentPage <= maxPages) {
       console.log(`[Playwright] Processing page ${currentPage}...`);
       
-      const formFields = await extractFormFields(page);
+      const formFields: any[] = await extractFormFields(page);
       console.log(`[Playwright] Found ${formFields.length} form fields on page ${currentPage}`);
 
       // Fill fields on current page
@@ -401,14 +401,15 @@ export async function fillFormWithPlaywright(input: {
                 : String(answer);
               
               if (field.type === 'contenteditable') {
-                await page.evaluate((sel: string, val: string) => {
+                await page.evaluate((args: string[]) => {
+                  const [sel, val] = args;
                   const el = document.querySelector(sel);
                   if (el) {
                     el.textContent = val;
                     el.dispatchEvent(new Event('input', { bubbles: true }));
                     el.dispatchEvent(new Event('change', { bubbles: true }));
                   }
-                }, selector, value);
+                }, [selector, value]);
               } else {
                 await page.fill(selector, value, { timeout: 5000 });
               }

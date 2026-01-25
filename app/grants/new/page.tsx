@@ -23,7 +23,8 @@ export default function NewGrant() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
-    const grantUrl = formData.grant_url || (file ? file.name : '');
+    // Don't use filename as grant_url - keep it empty for file uploads
+    const grantUrl = formData.grant_url || '';
     
     try {
       const res = await fetch('/api/grants', {

@@ -22,17 +22,33 @@ export async function POST(
     }
 
     // Use portal_url if provided, otherwise fall back to grant_url
-    // If grant_url is a PDF/document, this will fail - user should provide portal_url
     const targetUrl = grant.portal_url || grant.grant_url;
     
     if (!targetUrl) {
       return NextResponse.json({ error: "No URL provided for form filling" }, { status: 400 });
     }
 
+    // Validate URL is a proper web URL (not a filename or PDF)
+    const isValidWebUrl = targetUrl.startsWith('http://') || targetUrl.startsWith('https://');
+    const isPdfOrDoc = /\.(pdf|docx?)$/i.test(targetUrl);
+    
+    if (!isValidWebUrl) {
+      return NextResponse.json({ 
+        error: "Web form filling requires a valid web URL (http:// or https://). For PDF grants, use the Export PDF feature instead.",
+        hint: "Set a portal_url if the grant application is submitted via a separate web portal."
+      }, { status: 400 });
+    }
+    
+    if (isPdfOrDoc) {
+      return NextResponse.json({ 
+        error: "Cannot fill web form for PDF/DOCX URLs. Use the Export PDF feature to generate a filled PDF.",
+      }, { status: 400 });
+    }
+
     console.log(`[fill-web] Grant ${id}: Filling form at ${targetUrl}`);
     console.log(`[fill-web] Grant has ${grant.responses.length} responses`);
 
-    const result2 = await fillFormWithPlaywright({ targetUrl, grant });
+    const result2 = await fillFormWithPlaywright({ targetUrl, grant: grant as any });
 
     console.log(`[fill-web] Result: ${result2.fieldsFilled} filled, ${result2.fieldsSkipped} skipped`);
 
